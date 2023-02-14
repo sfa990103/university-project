@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Form Interface for POST, PUT, DELETE</title>	
+</head>
+<body bgcolor="#f7f2f2">
+	<h3><font color="#007aff">Form Interface for POST, PUT, DELETE</font></h3>
+	<hr>
+<form>
+	
+		Action : 
+		  <label>
+		    <input type="radio" name="action" value="post" id="action_0">
+		    Post</label>
+		  <label>
+		    <input type="radio" name="action" value="put" id="action_1">
+		    Put</label>
+		  <label>
+		    <input type="radio" name="action" value="del" id="action_2">
+		    Delete</label>
+	<br/>
+		Currency : <div id="curr"><select id="curr_select"></select></div>
+	<br/>
+		<input type="submit" onClick="pull_xml()">
+	<br/>
+	<hr>
+		<textarea rows="30" cols="100" id="xml"></textarea>
+		<script>
+			function addselect(test){
+				var x = document.getElementById("curr_select");
+  				var option = document.createElement("option");
+  				option.text = test;
+  				x.add(option);
+			}
+			function pull(){
+				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.onreadystatechange = function() {
+  				if (this.readyState == 4 && this.status == 200) {
+    				var myArr = JSON.parse(this.responseText);
+					for(var i=0; i < myArr.length;i++){
+						addselect(myArr[i]);	
+					}
+  					}
+				};
+				xmlhttp.open("GET", "pull.php", true);
+				xmlhttp.send();	
+			}
+			function show(myXml){
+				var d = document.createElement('div'); 
+				var t = document.createTextNode(myXml); 
+				d.appendChild(t);
+				document.getElementById("xml").value = d.innerHTML;
+				pull();
+			}
+			function pull_xml(){
+				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.onreadystatechange = function() {
+  				if (this.readyState == 4 && this.status == 200) {
+    				var myArr = this.responseText;
+					show(myArr);
+  					}
+				};
+				var x = document.getElementById('curr_select').value;
+				if(document.getElementById('action_0').checked){
+					var y = 'post';
+				}
+				if(document.getElementById('action_1').checked){
+					var y = 'put';
+				}
+				if(document.getElementById('action_2').checked){
+					var y = 'del';
+				}
+				xmlhttp.open("GET", "../update/?cur="+x+"&action="+y+"", true);
+				xmlhttp.send();	
+			}
+			pull();
+	
+</script>	
+  </form>
+	
+</body>
+</html>
